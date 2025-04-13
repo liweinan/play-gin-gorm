@@ -96,6 +96,57 @@ The project uses Docker Compose to run two containers:
 
   Note: This will delete all data in the database. Use this command when you want to start with a clean database.
 
+- Access the containers:
+  ```bash
+  # Access the Go application container
+  docker exec -it gin-gorm-app /bin/sh
+
+  # Access the PostgreSQL database container
+  docker exec -it gin-gorm-db psql -U postgres -d gin_gorm
+  ```
+
+  Once inside the PostgreSQL container, you can run SQL commands:
+  ```sql
+  -- List all tables
+  \dt
+
+  -- List all users
+  SELECT * FROM users;
+
+  -- Show table structure
+  \d users
+
+  -- Create a new user directly in the database
+  INSERT INTO users (username, email, password) 
+  VALUES ('dbuser', 'dbuser@example.com', 'hashed_password');
+
+  -- Update a user
+  UPDATE users SET email = 'newemail@example.com' WHERE id = 1;
+
+  -- Delete a user
+  DELETE FROM users WHERE id = 1;
+
+  -- Exit PostgreSQL
+  \q
+  ```
+
+  Common PostgreSQL commands:
+  ```sql
+  -- Connect to a different database
+  \c database_name
+
+  -- List all databases
+  \l
+
+  -- List all schemas
+  \dn
+
+  -- Show help
+  \?
+  ```
+
+  To exit any container shell, type `exit` or press `Ctrl+D`
+
 ## API Endpoints
 
 ### Users

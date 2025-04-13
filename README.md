@@ -88,9 +88,24 @@ The project uses Docker Compose to run two containers:
 
 - `POST /users/` - Create a new user
   ```bash
+  # Required fields:
+  # - username (must be unique)
+  # - email (must be unique)
+  # - password
   curl -X POST -H "Content-Type: application/json" \
-    -d '{"name": "Test User", "email": "test@example.com"}' \
+    -d '{"username": "testuser", "email": "test@example.com", "password": "your_password"}' \
     http://localhost:8080/users/
+  ```
+
+  Example response:
+  ```json
+  {
+    "id": 1,
+    "username": "testuser",
+    "email": "test@example.com",
+    "created_at": "2025-04-13T12:03:51.880717168Z",
+    "updated_at": "2025-04-13T12:03:51.880717168Z"
+  }
   ```
 
 - `GET /users/` - Get all users

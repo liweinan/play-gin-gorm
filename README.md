@@ -6,66 +6,14 @@ A RESTful API built with Gin and GORM, providing user management functionality w
 
 - User CRUD operations
 - PostgreSQL database integration
-- Environment-based configuration
+- Docker containerization
 - RESTful API endpoints
+- Health checks for database availability
 
 ## Prerequisites
 
-- Go 1.21 or higher
-- PostgreSQL database
+- Docker and Docker Compose
 - Git
-
-## Database Setup
-
-### Option 1: Using PostgreSQL CLI
-
-1. Connect to PostgreSQL:
-   ```bash
-   psql -U postgres
-   ```
-
-2. Create the database:
-   ```sql
-   CREATE DATABASE gin_gorm;
-   ```
-
-3. Create a user (if needed):
-   ```sql
-   CREATE USER your_username WITH PASSWORD 'your_password';
-   ```
-
-4. Grant privileges:
-   ```sql
-   GRANT ALL PRIVILEGES ON DATABASE gin_gorm TO your_username;
-   ```
-
-### Option 2: Using Docker
-
-1. Pull the PostgreSQL image:
-   ```bash
-   docker pull postgres
-   ```
-
-2. Run the container:
-   ```bash
-   docker run --name gin-gorm-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=gin_gorm -p 5432:5432 -d postgres
-   ```
-
-### Option 3: Using pgAdmin (GUI)
-
-1. Open pgAdmin and connect to your PostgreSQL server
-2. Right-click on "Databases" and select "Create" > "Database"
-3. Enter "gin_gorm" as the database name
-4. Click "Save" to create the database
-
-After creating the database, update your `.env` file with the correct credentials:
-```
-DB_HOST=localhost
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_NAME=gin_gorm
-DB_PORT=5432
-```
 
 ## Project Structure
 
@@ -75,12 +23,14 @@ DB_PORT=5432
 ├── handlers/       # Request handlers
 ├── models/         # Data models
 ├── .env           # Environment variables
+├── Dockerfile     # Application container configuration
+├── docker-compose.yml # Docker services configuration
 ├── go.mod         # Go module file
 ├── go.sum         # Go dependencies checksum
 └── main.go        # Application entry point
 ```
 
-## Setup
+## Quick Start with Docker
 
 1. Clone the repository:
    ```bash
@@ -88,45 +38,104 @@ DB_PORT=5432
    cd gin-gorm
    ```
 
-2. Install dependencies:
+2. Start the application using Docker Compose:
    ```bash
-   go mod download
+   docker-compose up -d
    ```
 
-3. Configure the database:
-   - Create a PostgreSQL database
-   - Copy the `.env.example` file to `.env`
-   - Update the `.env` file with your database credentials:
-     ```
-     DB_HOST=localhost
-     DB_USER=your_username
-     DB_PASSWORD=your_password
-     DB_NAME=your_database_name
-     DB_PORT=5432
-     ```
+The application will be available at `http://localhost:8080`
 
-4. Run the application:
-   ```bash
-   go run main.go
-   ```
+## Docker Configuration
 
-The server will start on `http://localhost:8080`
+The project uses Docker Compose to run two containers:
+
+1. **PostgreSQL Database (gin-gorm-db)**
+   - Port: 5432
+   - Username: postgres
+   - Password: postgres
+   - Database: gin_gorm
+   - Includes health checks to ensure database availability
+
+2. **Go Application (gin-gorm-app)**
+   - Port: 8080
+   - Waits for database to be healthy before starting
+
+## Docker Commands
+
+- Start the application:
+  ```bash
+  docker-compose up -d
+  ```
+
+- Stop the application:
+  ```bash
+  docker-compose down
+  ```
+
+- View logs:
+  ```bash
+  docker-compose logs -f
+  ```
+
+- Rebuild and restart:
+  ```bash
+  docker-compose up -d --build
+  ```
 
 ## API Endpoints
 
 ### Users
 
-- `POST /users` - Create a new user
-- `GET /users` - Get all users
+- `POST /users/` - Create a new user
+  ```bash
+  curl -X POST -H "Content-Type: application/json" \
+    -d '{"name": "Test User", "email": "test@example.com"}' \
+    http://localhost:8080/users/
+  ```
+
+- `GET /users/` - Get all users
+  ```bash
+  curl http://localhost:8080/users/
+  ```
+
 - `GET /users/:id` - Get a specific user
+  ```bash
+  curl http://localhost:8080/users/1
+  ```
+
 - `PUT /users/:id` - Update a user
+  ```bash
+  curl -X PUT -H "Content-Type: application/json" \
+    -d '{"name": "Updated User", "email": "updated@example.com"}' \
+    http://localhost:8080/users/1
+  ```
+
 - `DELETE /users/:id` - Delete a user
+  ```bash
+  curl -X DELETE http://localhost:8080/users/1
+  ```
 
 ## Dependencies
 
-- [Gin](https://github.com/gin-gonic/gin) - Web framework
-- [GORM](https://gorm.io/) - ORM library
-- [godotenv](https://github.com/joho/godotenv) - Environment variable loader
+- [Gin](https://github.com/gin-gonic/gin) v1.9.1 - Web framework
+- [GORM](https://gorm.io/) v1.25.5 - ORM library
+- [PostgreSQL](https://www.postgresql.org/) - Database
+- [godotenv](https://github.com/joho/godotenv) v1.5.1 - Environment variable loader
+
+## Development
+
+For local development without Docker:
+
+1. Install PostgreSQL locally
+2. Copy `.env.example` to `.env` and update the credentials
+3. Install Go dependencies:
+   ```bash
+   go mod download
+   ```
+4. Run the application:
+   ```bash
+   go run main.go
+   ```
 
 ## License
 

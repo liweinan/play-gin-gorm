@@ -82,6 +82,20 @@ The project uses Docker Compose to run two containers:
   docker-compose up -d --build
   ```
 
+- Recreate containers (useful when you need to reset the database):
+  ```bash
+  # Stop and remove all containers
+  docker-compose down
+
+  # Remove the volume to delete all data
+  docker volume rm play-gin-gorm_postgres_data
+
+  # Start fresh containers
+  docker-compose up -d --build
+  ```
+
+  Note: This will delete all data in the database. Use this command when you want to start with a clean database.
+
 ## API Endpoints
 
 ### Users
